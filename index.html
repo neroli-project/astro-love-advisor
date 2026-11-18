@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>恋星 - 恋愛・結婚専門 占星術鑑定ツール</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Shippori Mincho & Zen Kaku Gothic New -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Astronomy Engine (Browser UMD build) -->
+    <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+    <!-- Chart.js for Biorhythm Graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for Astrology & UI Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Zen Kaku Gothic New', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #f4eff6 50%, #ebedee 100%);
+            color: #2d2638;
+        }
+        .font-mincho {
+            font-family: 'Shippori Mincho', serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px -5px rgba(74, 46, 99, 0.08);
+        }
+        .mystic-gradient {
+            background: linear-gradient(135deg, #4a2559 0%, #7b3f61 50%, #b56576 100%);
+        }
+        .gold-accent {
+            color: #c59b27;
+        }
+        .tab-active {
+            background-color: #5c2d68;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(92, 45, 104, 0.25);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1edf5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c4b0d1;
+            border-radius: 3px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="mystic-gradient text-white py-5 px-4 shadow-md sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center text-amber-200 text-xl border border-white/30">
+                    <i class="fa-solid fa-moon"></i>
+                </div>
+                <div>
+                    <h1 class="font-mincho text-xl sm:text-2xl font-bold tracking-wider">恋星 <span class="text-xs sm:text-sm font-normal text-pink-200 ml-1">Astro-Love Advisor</span></h1>
+                    <p class="text-[11px] sm:text-xs text-purple-100/80">恋愛傾向・結婚像・出会いの時期 専門鑑定システム</p>
+                </div>
+            </div>
+            <div class="text-xs bg-white/10 px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Astronomy Engine 稼働中</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 mt-6 space-y-6">
+
+        <!-- Input Form Section -->
+        <section class="glass-card rounded-2xl p-5 sm:p-7">
+            <div class="flex items-center justify-between mb-4 border-b border-purple-100 pb-3">
+                <h2 class="font-mincho text-lg sm:text-xl font-bold text-purple-950 flex items-center gap-2">
+                    <i class="fa-regular fa-compass text-pink-600"></i> お客様の出生データ入力
+                </h2>
+                <button type="button" onclick="fillSampleData()" class="text-xs text-purple-700 hover:text-purple-900 bg-purple-100/80 hover:bg-purple-200/80 px-3 py-1.5 rounded-lg transition font-medium">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>サンプル入力
+                </button>
+            </div>
+
+            <form id="astroForm" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- Name (Optional) -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">お名前（カルテ表示用・任意）</label>
+                    <input type="text" id="clientName" placeholder="例：佐藤 美咲 様" class="w-full px-3.5 py-2.5 rounded-xl border border-purple-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
+                </div>
+
+                <!-- Birth Date -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">生年月日 <span class="text-pink-600">*</span></label>
+                    <input type="date" id="birthDate" required value="1995-07-14" class="w-full px-3.5 py-2.5 rounded-xl border border-purple-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
+                </div>
+
+                <!-- Birth Time + Unknown Toggle -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-xs font-bold text-gray-600">出生時間（日本標準時）</label>
+                        <label class="inline-flex items-center cursor-pointer text-xs text-purple-700 font-medium">
+                            <input type="checkbox" id="timeUnknown" class="rounded text-purple-600 focus:ring-purple-500 mr-1" onchange="toggleTimeInput()">
+                            時間不明
+                        </label>
+                    </div>
+                    <input type="time" id="birthTime" value="14:30" class="w-full px-3.5 py-2.5 rounded-xl border border-purple-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm transition-opacity">
+                </div>
+
+                <!-- Target Prediction Start Date & Submit -->
+                <div class="sm:col-span-3 flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-purple-100/80">
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <label class="text-xs font-bold text-gray-600 whitespace-nowrap">時期予測の基準日：</label>
+                        <input type="date" id="targetDate" class="px-3 py-2 rounded-xl border border-purple-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <span class="text-xs text-gray-500 hidden md:inline">※この日から向こう2年間の恋愛運・出会いをスキャンします</span>
+                    </div>
+
+                    <button type="submit" class="w-full sm:w-auto mystic-gradient hover:opacity-95 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-purple-900/20 transition transform active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap">
+                        <i class="fa-solid fa-sparkles"></i> 恋愛・結婚運を鑑定する
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Error / Message Box -->
+        <div id="messageBox" class="hidden bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation text-rose-500"></i>
+            <span id="messageText"></span>
+        </div>
+
+        <!-- Results Dashboard (Hidden until calculated) -->
+        <div id="resultsContainer" class="hidden space-y-6 animate-fade-in">
+
+            <!-- Client Header Banner -->
+            <div class="glass-card rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-l-4 border-l-pink-600">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-pink-100 text-pink-800">鑑定カルテ</span>
+                        <span id="timeModeBadge" class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800">出生時間：判明</span>
+                    </div>
+                    <h2 id="displayClientTitle" class="font-mincho text-2xl font-bold text-gray-900 mt-1">ゲスト様 の恋愛・結婚ホロスコープ</h2>
+                    <p id="displayBirthSummary" class="text-xs text-gray-500 mt-0.5"></p>
+                </div>
+                            </div>
+
+            <!-- Natal Planets Overview Grid -->
+            <section class="glass-card rounded-2xl p-5 sm:p-6">
+                <h3 class="font-mincho text-lg font-bold text-purple-950 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-star-and-crescent text-amber-500"></i> 恋愛・結婚に関わる7天体の配置
+                </h3>
+                <div id="planetCardsGrid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+                    <!-- Populated via JS -->
+                </div>
+                <div id="moonUnknownNotice" class="hidden mt-3 bg-amber-50/90 border border-amber-200/80 rounded-xl p-3 text-xs text-amber-900 flex items-start gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5"></i>
+                    <div>
+                        <span class="font-bold">【出生時間不明モード適用中】</span>
+                        月は1日に約13度移動するため、出生時間によってサイン（星座）が変わる場合があります。そのため「月」は薄く表示し、鑑定では主に<span class="underline">金星・火星・太陽・水星・木星・土星</span>および天体同士の角度を重視して読み解いています。
+                    </div>
+                </div>
+            </section>
+
+            <!-- Navigation Tabs for Detailed Readings -->
+            <div class="flex flex-wrap gap-2 bg-white/60 p-1.5 rounded-2xl border border-purple-100">
+                <button onclick="switchTab('timing')" id="tab-timing" class="tab-active flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-calendar-check"></i> 出会いの時期・運気予報（2年間）
+                </button>
+                <button onclick="switchTab('loveStyle')" id="tab-loveStyle" class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-gray-600 hover:bg-white/80 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-heart"></i> 基本の恋愛傾向・アプローチ
+                </button>
+                <button onclick="switchTab('marriage')" id="tab-marriage" class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-gray-600 hover:bg-white/80 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-ring"></i> 結婚運・理想のパートナー像
+                </button>
+            </div>
+
+            <!-- TAB 1: Timing & Predictions -->
+            <div id="panel-timing" class="space-y-6">
+                <!-- Biorhythm Graph -->
+                <div class="glass-card rounded-2xl p-5 sm:p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                        <div>
+                            <h3 class="font-mincho text-lg font-bold text-purple-950">今後2年間の恋愛・出会いバイオリズム</h3>
+                            <p class="text-xs text-gray-500">「出会い・結婚の大チャンス（核）」と「恋のきっかけ・急接近サイン」の2つの波を表示</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3 text-xs">
+                            <span class="flex items-center gap-1 font-medium text-pink-800"><span class="w-3 h-3 rounded-full bg-pink-500 inline-block"></span> 出会い・結婚の大チャンス（核）</span>
+                            <span class="flex items-center gap-1 font-medium text-indigo-800"><span class="w-3 h-3 rounded-full bg-indigo-400 inline-block"></span> 恋のきっかけ・急接近サイン</span>
+                        </div>
+                    </div>
+                    <div class="w-full h-64 sm:h-72 relative">
+                        <canvas id="biorhythmChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Filter & Timeline Events -->
+                <div class="glass-card rounded-2xl p-5 sm:p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-purple-100 pb-3">
+                        <div>
+                            <h3 class="font-mincho text-lg font-bold text-purple-950">お客様にそのまま伝えられる「チャンス期カレンダー」</h3>
+                            <p class="text-xs text-gray-500">占星術の専門用語を、鑑定で使いやすい具体的な恋愛イベントラベルに変換しています</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="filterTimeline('all')" id="filter-all" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-800 text-white transition">すべて表示</button>
+                            <button onclick="filterTimeline('level1')" id="filter-level1" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-100 text-purple-800 hover:bg-purple-200 transition">最優先（核）のみ</button>
+                        </div>
+                    </div>
+
+                    <div id="timelineContainer" class="space-y-4">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: Love Style & Communication -->
+            <div id="panel-loveStyle" class="hidden space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5" id="loveStyleCards">
+                    <!-- Venus, Mars, Mercury cards populated via JS -->
+                </div>
+                <div class="glass-card rounded-2xl p-5 sm:p-6 bg-gradient-to-r from-purple-50/90 to-pink-50/90">
+                    <h4 class="font-mincho text-base font-bold text-purple-950 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-sparkles text-pink-600"></i> 占い師さん向け：総合恋愛アドバイス台本
+                    </h4>
+                    <p id="loveScriptSummary" class="text-sm text-gray-700 leading-relaxed"></p>
+                </div>
+            </div>
+
+            <!-- TAB 3: Marriage & Partner -->
+            <div id="panel-marriage" class="hidden space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="marriageCards">
+                    <!-- Sun, Saturn, Jupiter cards populated via JS -->
+                </div>
+                <div class="glass-card rounded-2xl p-5 sm:p-6 border-l-4 border-l-amber-500">
+                    <h4 class="font-mincho text-base font-bold text-purple-950 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-crown text-amber-500"></i> 結婚が現実化する鍵・パートナー選びのポイント
+                    </h4>
+                    <p id="marriageScriptSummary" class="text-sm text-gray-700 leading-relaxed"></p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Hidden textarea for reliable clipboard copy -->
+    <textarea id="clipboardBuffer" class="fixed -top-96 left-0 opacity-0"></textarea>
+
+    <script>
+        // =========================================================================
+        // 1. CONSTANTS & ASTROLOGY DICTIONARIES (JAPANESE)
+        // =========================================================================
+        const SIGNS = [
+            { name: '牡羊座', symbol: '♈', element: '火', quality: '活動', color: 'text-rose-600 bg-rose-50 border-rose-200' },
+            { name: '牡牛座', symbol: '♉', element: '地', quality: '不動', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
+            { name: '双子座', symbol: '♊', element: '風', quality: '柔軟', color: 'text-sky-600 bg-sky-50 border-sky-200' },
+            { name: '蟹座',   symbol: '♋', element: '水', quality: '活動', color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
+            { name: '獅子座', symbol: '♌', element: '火', quality: '不動', color: 'text-amber-600 bg-amber-50 border-amber-200' },
+            { name: '乙女座', symbol: '♍', element: '地', quality: '柔軟', color: 'text-teal-700 bg-teal-50 border-teal-200' },
+            { name: '天秤座', symbol: '♎', element: '風', quality: '活動', color: 'text-pink-600 bg-pink-50 border-pink-200' },
+            { name: '蠍座',   symbol: '♏', element: '水', quality: '不動', color: 'text-purple-800 bg-purple-50 border-purple-200' },
+            { name: '射手座', symbol: '♐', element: '火', quality: '柔軟', color: 'text-orange-600 bg-orange-50 border-orange-200' },
+            { name: '山羊座', symbol: '♑', element: '地', quality: '活動', color: 'text-slate-700 bg-slate-100 border-slate-300' },
+            { name: '水瓶座', symbol: '♒', element: '風', quality: '不動', color: 'text-cyan-700 bg-cyan-50 border-cyan-200' },
+            { name: '魚座',   symbol: '♓', element: '水', quality: '柔軟', color: 'text-violet-600 bg-violet-50 border-violet-200' }
+        ];
+
+        const PLANET_META = {
+            Venus:   { jp: '金星', symbol: '♀', role: '愛し方・魅力・恋愛スタイル', icon: 'fa-heart', accent: 'text-pink-600' },
+            Mars:    { jp: '火星', symbol: '♂', role: '情熱・アプローチ・惹かれる異性', icon: 'fa-fire', accent: 'text-rose-600' },
+            Sun:     { jp: '太陽', symbol: '☉', role: '結婚後の姿・理想の夫/パートナー像', icon: 'fa-sun', accent: 'text-amber-500' },
+            Mercury: { jp: '水星', symbol: '☿', role: '会話の相性・LINEや連絡のコツ', icon: 'fa-comments', accent: 'text-sky-600' },
+            Jupiter: { jp: '木星', symbol: '♃', role: '出会いのチャンス・幸運の場', icon: 'fa-sparkles', accent: 'text-purple-600' },
+            Saturn:  { jp: '土星', symbol: '♄', role: '恋愛の課題・結婚の決め手と安定', icon: 'fa-ring', accent: 'text-slate-700' },
+            Moon:    { jp: '月',   symbol: '☽', role: '素の感情・一緒にいて安心する感覚', icon: 'fa-moon', accent: 'text-indigo-500' }
+        };
+
+        // Detailed Sign Interpretations for Love & Marriage
+        const SIGN_INTERPRETATIONS = {
+            Venus: [
+                "直感的で情熱的な恋に落ちやすいタイプ。駆け引きよりもストレートな愛情表現で魅力が全開になります。",
+                "五感の心地よさを大切にするロマンチスト。美味しい食事や落ち着いた空間を共有することで愛が深まります。",
+                "会話のテンポや知的な刺激から恋が始まるタイプ。友達のような軽やかで爽やかな関係が魅力を引き立てます。",
+                "母性・包容力にあふれ、相手を深く気遣うことで愛を育みます。家庭的な一面や優しさが最大の武器です。",
+                "ドラマチックで華やかな恋を好む主役タイプ。堂々とした笑顔とポジティブなオーラが周囲を惹きつけます。",
+                "誠実で細やかな気配りができる控えめな魅力の持ち主。清潔感や相手をサポートする姿勢が強く愛されます。",
+                "洗練されたセンスと社交性を持ち、スマートな恋愛を楽しみます。対等で美しい関係性を築くのが得意です。",
+                "一度好きになると一途に深く愛する情熱家。ミステリアスな色気と、特別な絆を結ぶ強い引力があります。",
+                "自由でオープンな恋愛スタイル。一緒に新しい世界へ冒険に出かけられるような明るい魅力にあふれています。",
+                "一途で誠実、将来を見据えた落ち着いた恋をします。時間とともに信頼が深まる大人の魅力を持っています。",
+                "常識にとらわれない個性的な魅力の持ち主。お互いの自由を尊重し合える風通しの良い恋を好みます。",
+                "優しくロマンチックで、相手の気持ちに寄り添う癒やし系。献身的な愛と柔らかな雰囲気で相手を包み込みます。"
+            ],
+            Mars: [
+                "好きになったら一直線！自分から積極的にアプローチする行動派。決断力があり男らしいタイプに惹かれます。",
+                "じっくり時間をかけて距離を縮める慎重派。穏やかで安定感があり、経済観念のしっかりした人に惹かれます。",
+                "言葉やLINEでのアプローチが得意な策士。頭の回転が速く、会話が面白い知的なタイプに心が動きます。",
+                "大切な人を守るために行動するタイプ。感情表現が豊かで、家族や仲間思いの温かい人に強く惹かれます。",
+                "堂々と自信を持ってアプローチする情熱家。少し強引でも頼りがいがあり、尊敬できるリーダータイプが好み。",
+                "相手のニーズを察知してさりげなく尽くすアプローチ法。真面目で誠実、仕事熱心な人に惹かれやすい傾向です。",
+                "スマートに誘い、雰囲気作りが上手なタイプ。外見やマナーが洗練されたジェントルマン・レディに惹かれます。",
+                "表面はクールでも内面には激しい情熱を秘めています。色気があり、簡単には心を見せない奥深い人に惹かれます。",
+                "思い立ったらすぐ誘うフットワークの軽さが武器。明るく前向きで、行動範囲が広い人に惹かれます。",
+                "計画的かつ誠実にアプローチし、確実に信頼を勝ち取ります。社会的地位や責任感のある大人なタイプが理想。",
+                "友達から自然に距離を縮めるフレンドリーなアプローチ。独自の価値観を持つ個性的な人に惹かれます。",
+                "直接的な言葉より、雰囲気や優しさで相手を惹きつけるタイプ。芸術肌や少し守ってあげたくなる人に弱いです。"
+            ],
+            Mercury: [
+                "返信は即レス派で結論が早いタイプ。テンポの良い短いラリーを心がけると相手との距離が一気に縮まります。",
+                "メッセージは丁寧でマイペース。長文や急かしはNG。相手のペースを尊重し、落ち着いたやり取りをすると好印象。",
+                "話題が豊富でユーモアたっぷり！面白いニュースやちょっとした雑談をマメに送ることで恋が進展します。",
+                "感情や共感を大切にするコミュニケーション。相手の体調や気分を気遣う優しい一言が心の距離を縮めます。",
+                "明るくポジティブな言葉選びが得意。相手を褒めたり盛り上げたりするメッセージを送ると抜群に効果的です。",
+                "実用的で具体的な連絡を好みます。デートの予定やお店選びなどを丁寧にサポートすると信頼度が急上昇します。",
+                "相手に合わせて言葉を選べるバランス感覚の持ち主。おしゃれなカフェや話題のスポットの共有が会話の鍵に。",
+                "表面的な雑談より、本音や深い話を好みます。二人だけの秘密や核心に触れる会話をすると一気に親密になれます。",
+                "ストレートで開放的な会話スタイル。夢や将来の楽しい計画について語り合うと、ワクワク感が共有できます。",
+                "礼儀正しく簡潔な連絡を好みます。約束を守る誠実なやり取りを積み重ねることが、安心感につながります。",
+                "ユニークな視点の会話が得意。束縛せず、面白いアイデアや最新の話題をシェアすると楽しく続きます。",
+                "言葉のニュアンスや空気感を大切にするタイプ。絵文字やスタンプで温かみを添えると気持ちが伝わりやすいです。"
+            ],
+            Sun: [
+                "結婚後は活気があり、お互いに自立して刺激し合える家庭を築きます。行動力があり裏表のないパートナーが理想です。",
+                "経済的・精神的に安定した穏やかな結婚生活がテーマ。五感を満たす豊かな暮らしを大切にできる人がベストパートナー。",
+                "会話が絶えず、夫婦でありながら親友のような関係が理想。知的好奇心を共有できる柔軟なパートナーと相性抜群です。",
+                "温かい家庭を築くことが人生の大きな喜びに。家族を何より大切にし、安心感を与えてくれる人が理想の伴侶です。",
+                "笑顔と誇りに満ちた明るい家庭を築きます。尊敬し合え、人生を一緒に楽しんでくれる華やかなパートナーが合います。",
+                "お互いの役割をきちんとこなし、堅実で清潔感のある暮らしを築きます。誠実で気配り上手なパートナーが理想です。",
+                "パートナーシップそのものが人生のテーマ。社交的でバランス感覚に優れ、対等な関係を楽しめる人が最良の相手です。",
+                "深い絆と信頼で結ばれた揺るぎない結婚生活を送ります。一途で覚悟があり、困難も共に乗り越えられる人が理想。",
+                "家庭に縛られすぎず、夫婦で成長し続ける自由なスタイル。視野が広く、楽観的で器の大きいパートナーと合います。",
+                "社会的な信用と安定を大切にする堅実な結婚観。責任感が強く、長期的な人生設計を共に歩める人がベストです。",
+                "従来の枠にとらわれない対等でフラットな夫婦関係が理想。お互いの個性や時間を尊重できるパートナーが合います。",
+                "優しさと癒やしに満ちた精神的なつながりの深い結婚生活。思いやりがあり、感受性を理解し合える人が理想です。"
+            ],
+            Saturn: [
+                "恋愛で「自分ばかり急ぎすぎる」課題を乗り越えることで、焦らず信頼を育む強い絆が結婚の決め手になります。",
+                "「変化への恐れや執着」を手放した時、本当の意味で安心できる経済的・精神的に安定した結婚が現実化します。",
+                "「言葉にしなくてもわかるはず」という思い込みを超え、丁寧な対話を重ねることで揺るぎないパートナーシップが築けます。",
+                "「傷つくことへの防衛心」を解き、弱さを見せられる相手と出会った時、温かい家庭への扉が一気に開きます。",
+                "「プライドや理想の高さ」を少し緩め、等身大の自分をさらけ出せる相手との出会いが結婚の大きな転機になります。",
+                "「相手や自分への完璧主義」を手放し、不完全さも愛おしいと思えた時に、誠実で長続きする結婚が実を結びます。",
+                "「相手に合わせすぎる癖」を卒業し、自分の本音を伝えられる対等な関係こそが、真の結婚相手とのサインです。",
+                "「相手を疑う気持ちや重い執着」を乗り越えた先に、魂レベルで信頼し合える一生モノのパートナーが現れます。",
+                "「自由を失うことへの不安」を超え、二人だからこそ広がる世界があると気づいた時に結婚が現実味を帯びます。",
+                "元々結婚に対して真面目ですが、「責任を背負いすぎる癖」を緩め、頼り合える相手を選ぶことで幸せが定着します。",
+                "「心の距離を置きすぎるクールさ」を少し溶かし、日常の温もりを共有することで、唯一無二の伴侶と結ばれます。",
+                "「尽くしすぎて自己犠牲になるパターン」を卒業し、対等に愛を受け取れるようになった時、理想の結婚が叶います。"
+            ],
+            Jupiter: [
+                "新しい挑戦の場やスポーツ、イベントなどアクティブな場所に幸運の出会いがあり、スピード進展しやすい星回りです。",
+                "グルメ、アート、自然豊かな場所や趣味の集まりに良縁あり。おっとりした包容力のある相手とご縁が深まります。",
+                "SNS、学びの場、友人からの紹介、移動中に出会いが多いタイプ。知性的で会話が弾む相手が幸運を運びます。",
+                "地元の集まり、アットホームな食事会、知人の紹介など「安心できるコミュニティ」から温かい良縁が育ちます。",
+                "華やかなパーティー、推し活、クリエイティブな場に出会いあり。堂々とした器の大きい相手とドラマチックに結ばれます。",
+                "職場や仕事関係、習い事、健康・美容に関する場所に出会いあり。誠実で細やかな気配りができる人がラッキーパーソン。",
+                "紹介や婚活イベント、洗練されたラウンジや美容関連の場が吉。社交的でスマートな良縁に恵まれやすい運気です。",
+                "少人数の深い語らいの場や、共通の専門分野・趣味の集まりに出会いあり。一途で深い愛情を持つ相手と結ばれます。",
+                "旅行先、海外関連、大学やセミナーなど「未知の世界」に出会いあり。自由で楽観的なパートナーが幸運をもたらします。",
+                "仕事上の取引先、信頼できる目上の人からの紹介、歴史ある場所に良縁あり。真面目で将来性のある相手と結ばれます。",
+                "オンラインコミュニティ、異業種交流会、友人ネットワークから出会いあり。価値観が新しく自立した相手と好相性。",
+                "音楽・アートの場、癒やしの空間、ボランティアや相談事を通じて出会いあり。優しく共感力の高い相手と結ばれます。"
+            ]
+        };
+
+        // =========================================================================
+        // 2. INITIALIZATION & UI HELPERS
+        // =========================================================================
+        let currentChart = null;
+        let currentTimelineEvents = [];
+
+        window.onload = function() {
+            // Set default target date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('targetDate').value = today;
+
+            // Attach form handler
+            document.getElementById('astroForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                runAstrologyCalculation();
+            });
+        };
+
+        function toggleTimeInput() {
+            const isUnknown = document.getElementById('timeUnknown').checked;
+            const timeInput = document.getElementById('birthTime');
+            if (isUnknown) {
+                timeInput.disabled = true;
+                timeInput.classList.add('opacity-40', 'bg-gray-100');
+            } else {
+                timeInput.disabled = false;
+                timeInput.classList.remove('opacity-40', 'bg-gray-100');
+            }
+        }
+
+        function fillSampleData() {
+            document.getElementById('clientName').value = '桜井 結衣 様';
+            document.getElementById('birthDate').value = '1996-05-18';
+            document.getElementById('timeUnknown').checked = false;
+            toggleTimeInput();
+            document.getElementById('birthTime').value = '15:20';
+            runAstrologyCalculation();
+        }
+
+        function showMessage(msg) {
+            const box = document.getElementById('messageBox');
+            document.getElementById('messageText').textContent = msg;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 5000);
+        }
+
+        function switchTab(tabName) {
+            const tabs = ['timing', 'loveStyle', 'marriage'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                const panel = document.getElementById(`panel-${t}`);
+                if (t === tabName) {
+                    btn.classList.add('tab-active');
+                    btn.classList.remove('text-gray-600', 'hover:bg-white/80');
+                    panel.classList.remove('hidden');
+                } else {
+                    btn.classList.remove('tab-active');
+                    btn.classList.add('text-gray-600', 'hover:bg-white/80');
+                    panel.classList.add('hidden');
+                }
+            });
+        }
+
+        // =========================================================================
+        // 3. ASTRONOMY ENGINE CALCULATIONS (GEOCENTRIC ECLIPTIC LONGITUDE)
+        // =========================================================================
+        function getEclipticLongitude(bodyName, dateObj) {
+            // Astronomy Engine: GeoVector computes geocentric equatorial coordinates (J2000 or of-date),
+            // Ecliptic() converts it to true ecliptic coordinates of date (tropical zodiac).
+            const time = new Astronomy.AstroTime(dateObj);
+            const geoVec = Astronomy.GeoVector(bodyName, time, true);
+            const ecl = Astronomy.Ecliptic(geoVec);
+            // Normalize to 0 - 360 degrees
+            let lon = ecl.elon % 360;
+            if (lon < 0) lon += 360;
+            return lon;
+        }
+
+        function longitudeToSignInfo(lon) {
+            const signIndex = Math.floor(lon / 30);
+            const degreeInSign = lon % 30;
+            const deg = Math.floor(degreeInSign);
+            const min = Math.floor((degreeInSign - deg) * 60);
+            return {
+                signIndex,
+                sign: SIGNS[signIndex],
+                degree: deg,
+                minute: min,
+                formatted: `${SIGNS[signIndex].name} ${deg}°${String(min).padStart(2, '0')}'`
+            };
+        }
+
+        function getAngularDifference(lon1, lon2) {
+            let diff = Math.abs(lon1 - lon2) % 360;
+            if (diff > 180) diff = 360 - diff;
+            return diff;
+        }
+
+        // =========================================================================
+        // 4. MAIN CALCULATION & PREDICTION PIPELINE
+        // =========================================================================
+        function runAstrologyCalculation() {
+            try {
+                const birthDateStr = document.getElementById('birthDate').value;
+                if (!birthDateStr) {
+                    showMessage('生年月日を入力してください。');
+                    return;
+                }
+
+                const isTimeUnknown = document.getElementById('timeUnknown').checked;
+                const birthTimeStr = isTimeUnknown ? '12:00' : (document.getElementById('birthTime').value || '12:00');
+                const clientName = document.getElementById('clientName').value.trim() || 'ゲスト様';
+                const targetDateStr = document.getElementById('targetDate').value || new Date().toISOString().split('T')[0];
+
+                // Construct JST Date object (+09:00)
+                const birthDateTime = new Date(`${birthDateStr}T${birthTimeStr}:00+09:00`);
+                if (isNaN(birthDateTime.getTime())) {
+                    showMessage('日付または時刻の形式が正しくありません。');
+                    return;
+                }
+
+                // Calculate Natal Positions for 7 key bodies
+                const bodies = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn'];
+                const natalChart = {};
+                bodies.forEach(body => {
+                    const lon = getEclipticLongitude(body, birthDateTime);
+                    natalChart[body] = {
+                        lon,
+                        ...longitudeToSignInfo(lon)
+                    };
+                });
+
+                // Update Header Info
+                document.getElementById('displayClientTitle').textContent = `${clientName} の恋愛・結婚ホロスコープ`;
+                document.getElementById('displayBirthSummary').textContent =
+                    `生年月日: ${birthDateStr.replace(/-/g, '/')} ${isTimeUnknown ? '（出生時間不明・正午基準算出）' : birthTimeStr + '生まれ（日本標準時基準）'}`;
+
+                const timeBadge = document.getElementById('timeModeBadge');
+                if (isTimeUnknown) {
+                    timeBadge.textContent = '出生時間：不明モード（月注意）';
+                    timeBadge.className = 'text-xs font-medium px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800';
+                    document.getElementById('moonUnknownNotice').classList.remove('hidden');
+                } else {
+                    timeBadge.textContent = '出生時間：判明';
+                    timeBadge.className = 'text-xs font-medium px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800';
+                    document.getElementById('moonUnknownNotice').classList.add('hidden');
+                }
+
+                // Render Natal Planet Cards
+                renderPlanetCards(natalChart, isTimeUnknown);
+
+                // Render Love Style & Marriage Readings
+                renderLoveStyleReadings(natalChart, isTimeUnknown);
+                renderMarriageReadings(natalChart, isTimeUnknown);
+
+                // Scan 2-Year Transits & Render Graph + Timeline
+                const startDate = new Date(`${targetDateStr}T12:00:00+09:00`);
+                const scanResults = scanFutureTransits(natalChart, startDate, isTimeUnknown);
+                currentTimelineEvents = scanResults.events;
+
+                renderBiorhythmChart(scanResults.monthlyScores);
+                renderTimeline(currentTimelineEvents, 'all');
+
+                // Show Results
+                const resContainer = document.getElementById('resultsContainer');
+                resContainer.classList.remove('hidden');
+                resContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            } catch (err) {
+                console.error(err);
+                showMessage('計算中にエラーが発生しました。入力内容を確認してください。');
+            }
+        }
+
+        // =========================================================================
+        // 5. RENDER NATAL PLANETS & INTERPRETATIONS
+        // =========================================================================
+        function renderPlanetCards(natal, isTimeUnknown) {
+            const grid = document.getElementById('planetCardsGrid');
+            grid.innerHTML = '';
+
+            // Display order optimized for love reading
+            const order = ['Venus', 'Mars', 'Sun', 'Mercury', 'Jupiter', 'Saturn', 'Moon'];
+
+            order.forEach(body => {
+                const info = natal[body];
+                const meta = PLANET_META[body];
+                const isMoonMuted = (body === 'Moon' && isTimeUnknown);
+
+                const card = document.createElement('div');
+                card.className = `rounded-xl p-3 border transition ${isMoonMuted ? 'opacity-45 bg-gray-50/70 border-dashed border-gray-300' : 'bg-white border-purple-100 shadow-sm hover:shadow-md'}`;
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs font-bold ${meta.accent} flex items-center gap-1">
+                            <span>${meta.symbol}</span> ${meta.jp}
+                        </span>
+                        ${isMoonMuted ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-bold">時間不明</span>' : ''}
+                    </div>
+                    <div class="my-1.5 flex items-center gap-1.5">
+                        <span class="text-lg font-bold px-2 py-0.5 rounded-lg border ${info.sign.color}">${info.sign.symbol} ${info.sign.name}</span>
+                    </div>
+                    <div class="text-[11px] text-gray-500 font-mono">${info.degree}°${String(info.minute).padStart(2, '0')}'</div>
+                    <div class="text-[10px] text-gray-500 mt-1.5 leading-tight border-t border-gray-100 pt-1">${meta.role}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderLoveStyleReadings(natal, isTimeUnknown) {
+            const container = document.getElementById('loveStyleCards');
+            const targets = [
+                { key: 'Venus', title: '愛し方・魅力・恋愛スタイル', badge: '金星サイン' },
+                { key: 'Mars', title: 'アプローチ法・惹かれる異性', badge: '火星サイン' },
+                { key: 'Mercury', title: 'LINE・会話の距離の縮め方', badge: '水星サイン' }
+            ];
+
+            container.innerHTML = targets.map(item => {
+                const p = natal[item.key];
+                const meta = PLANET_META[item.key];
+                const text = SIGN_INTERPRETATIONS[item.key][p.signIndex];
+                return `
+                    <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-100 text-purple-800">${item.badge}</span>
+                                <span class="text-sm font-bold ${meta.accent}">${meta.symbol} ${p.sign.name}</span>
+                            </div>
+                            <h4 class="font-mincho text-base font-bold text-gray-900 mb-2">${item.title}</h4>
+                            <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">${text}</p>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-purple-100 text-[11px] text-purple-700 font-medium">
+                            エレメント：${p.sign.element}のサイン（${p.sign.quality}宮）
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const vSign = natal.Venus.sign.name;
+            const mSign = natal.Mars.sign.name;
+            const mercSign = natal.Mercury.sign.name;
+            document.getElementById('loveScriptSummary').innerHTML = `
+                「お客様のホロスコープを見ると、恋愛の楽しみ方や魅力を表す金星が<strong>【${vSign}】</strong>にあるため、本来はとても${SIGN_INTERPRETATIONS.Venus[natal.Venus.signIndex].split('。')[0]}という素敵な魅力をお持ちです。<br>
+                いざ好きになった時の行動パターンを表す火星は<strong>【${mSign}】</strong>ですので、${SIGN_INTERPRETATIONS.Mars[natal.Mars.signIndex].split('。')[0]}という一面があります。<br>
+                気になるお相手と距離を縮める時は、水星<strong>【${mercSign}】</strong>の特性を活かして、${SIGN_INTERPRETATIONS.Mercury[natal.Mercury.signIndex].split('。')[1] || SIGN_INTERPRETATIONS.Mercury[natal.Mercury.signIndex].split('。')[0]}と意識すると、驚くほどスムーズに仲が深まりますよ。」
+            `;
+        }
+
+        function renderMarriageReadings(natal, isTimeUnknown) {
+            const container = document.getElementById('marriageCards');
+            const targets = [
+                { key: 'Sun', title: '結婚後の姿・理想のパートナー像', badge: '太陽サイン' },
+                { key: 'Saturn', title: '恋愛の課題と結婚の決め手', badge: '土星サイン' },
+                { key: 'Jupiter', title: '良縁を引き寄せるラッキースポット', badge: '木星サイン' }
+            ];
+
+            container.className = 'grid grid-cols-1 md:grid-cols-3 gap-5';
+            container.innerHTML = targets.map(item => {
+                const p = natal[item.key];
+                const meta = PLANET_META[item.key];
+                const text = SIGN_INTERPRETATIONS[item.key][p.signIndex];
+                return `
+                    <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-900">${item.badge}</span>
+                                <span class="text-sm font-bold ${meta.accent}">${meta.symbol} ${p.sign.name}</span>
+                            </div>
+                            <h4 class="font-mincho text-base font-bold text-gray-900 mb-2">${item.title}</h4>
+                            <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">${text}</p>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-amber-100 text-[11px] text-amber-800 font-medium">
+                            ${item.key === 'Sun' ? '※結婚生活の方向性を示す重要天体' : item.key === 'Saturn' ? '※長期的な安定・現実化の鍵' : '※出会いの拡大・チャンスの在り処'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const sunSign = natal.Sun.sign.name;
+            const saturnSign = natal.Saturn.sign.name;
+            const jupSign = natal.Jupiter.sign.name;
+            const houseNote = isTimeUnknown
+                ? '※出生時間が不明なため、7ハウス（結婚の部屋）の代わりに「太陽のサイン」と「土星・木星の配置」を軸に結婚運を読み解いています。'
+                : '※出生時間をもとに天体の位置を精密に算出しています。';
+
+            document.getElementById('marriageScriptSummary').innerHTML = `
+                「結婚後のライフスタイルや理想のパートナー像を表す太陽が<strong>【${sunSign}】</strong>にあるため、${SIGN_INTERPRETATIONS.Sun[natal.Sun.signIndex]}<br>
+                また、結婚を現実化させる土星が<strong>【${saturnSign}】</strong>にありますので、${SIGN_INTERPRETATIONS.Saturn[natal.Saturn.signIndex]}<br>
+                出会いのチャンスを広げるなら、木星<strong>【${jupSign}】</strong>が示す通り、${SIGN_INTERPRETATIONS.Jupiter[natal.Jupiter.signIndex].split('。')[0]}に積極的に足を運んでみてください。」
+                <span class="block text-xs text-gray-500 mt-2">${houseNote}</span>
+            `;
+        }
+
+        // =========================================================================
+        // 6. 2-YEAR TRANSIT SCANNER (LEVEL 1 & LEVEL 2 ASPECTS)
+        // =========================================================================
+        function getAspectLabel(tBody, nBody, aspectDeg) {
+            const isHarmonious = (aspectDeg === 0 || aspectDeg === 60 || aspectDeg === 120);
+            const isConjunction = (aspectDeg === 0);
+
+            // Level 1: Venus & Sun (Core Love & Marriage)
+            if (nBody === 'Venus') {
+                if (tBody === 'Jupiter') {
+                    return isHarmonious
+                        ? { label: '✨ 恋のビッグチャンス期（愛されモテ期）', desc: '魅力が最大限に輝き、新しい出会いやアプローチが急増する最高の恋愛運気です。', tag: '出会い・モテ期', tone: 'pink' }
+                        : { label: '💫 恋の選択肢が広がる華やぎ期', desc: '楽しいお誘いが増え気持ちが盛り上がる時期。勢いだけでなく相手の本質を見極めると大吉。', tag: '盛り上がり期', tone: 'pink' };
+                }
+                if (tBody === 'Saturn') {
+                    return isHarmonious
+                        ? { label: '💍 真剣交際・将来を見据える安定期', desc: '遊びの恋ではなく、誠実な相手とじっくり信頼を育み、結婚を意識し始める堅実な時期です。', tag: '真剣交際・安定', tone: 'amber' }
+                        : { label: '🌿 愛の本気度が試される見極め期', desc: '関係性の課題が浮き彫りになりやすい時。ここを乗り越えた相手とは揺るぎない絆で結ばれます。', tag: '関係の見極め', tone: 'slate' };
+                }
+                if (tBody === 'Uranus') {
+                    return {
+                        label: isConjunction ? '⚡ 電撃的な出会い・一目惚れ期' : '⚡ 予想外の恋の急展開・価値観シフト期',
+                        desc: '今までとは違うタイプに惹かれたり、突然の出会いから一気に距離が縮まるドラマチックな時期です。',
+                        tag: '電撃的出会い',
+                        tone: 'purple'
+                    };
+                }
+            }
+
+            if (nBody === 'Sun') {
+                if (tBody === 'Jupiter') {
+                    return isHarmonious
+                        ? { label: '🌟 人生が輝く良縁・結婚チャンス拡大期', desc: '人生のステージが上がり、理想のパートナー像にぴったりの人物と引き合いやすい幸運期です。', tag: '良縁・発展期', tone: 'amber' }
+                        : { label: '☀️ 理想が高まり行動範囲が広がる時期', desc: '新しい世界へ飛び出すことで素敵なご縁につながる時。忙しさの中にも恋の種があります。', tag: '転機・拡大', tone: 'amber' };
+                }
+                if (tBody === 'Saturn') {
+                    return isHarmonious
+                        ? { label: '💒 結婚が現実化する・人生の決断期', desc: '責任あるパートナーシップを築くのに最適。入籍や同棲など、形にする決断がスムーズに進みます。', tag: '結婚現実化期', tone: 'amber' }
+                        : { label: '🧭 将来のパートナー像が明確になる転機', desc: '「本当に大切にしたい人生の軸」が定まる時期。妥協のないパートナー選びができるようになります。', tag: '人生の節目', tone: 'slate' };
+                }
+                if (tBody === 'Uranus') {
+                    return {
+                        label: '🚀 運命がガラリと変わる恋のブレイクスルー期',
+                        desc: 'これまでの恋愛パターンを打ち破り、新しいライフスタイルや運命の相手へと導かれる変革期です。',
+                        tag: '運命の転機',
+                        tone: 'purple'
+                    };
+                }
+            }
+
+            // Level 2: Mars, Mercury, Moon (Triggers & Emotional Shifts)
+            if (nBody === 'Mars') {
+                if (tBody === 'Jupiter') return { label: '🔥 恋の行動力アップ・積極アプローチ期', desc: '情熱が高まり自分から動ける時。片思いの進展や、エネルギッシュな相手との出会いに期待。', tag: '行動・進展', tone: 'indigo' };
+                if (tBody === 'Saturn') return { label: '🛡️ 関係を形にする粘り強さが出る時期', desc: '一時の感情に流されず、着実に二人の関係を進展させるための現実的な行動がとれる時です。', tag: '着実な進展', tone: 'indigo' };
+                if (tBody === 'Uranus') return { label: '💥 急接近・衝動的な恋のスイッチが入る時', desc: '予定外の誘いや突発的なイベントから、一気に恋のスイッチが入る刺激的なタイミングです。', tag: '急接近トリガー', tone: 'indigo' };
+            }
+
+            if (nBody === 'Mercury') {
+                return { label: '💌 連絡が急増・会話から恋が芽生える時期', desc: 'LINEやSNSでのやり取りが活発になり、共通の話題や知的な会話から急接近しやすいタイミングです。', tag: '連絡・会話増', tone: 'sky' };
+            }
+
+            if (nBody === 'Moon') {
+                return { label: '🌙 心が揺れ動く・安心感を求める時期', desc: '感受性が高まり「誰かと寄り添いたい」という気持ちが強まる時。心のつながりを大切にすると吉。', tag: '感情の動き', tone: 'sky' };
+            }
+
+            return { label: '✨ 星の転機', desc: '恋愛面で新しい動きが起きやすいタイミングです。', tag: '転機', tone: 'purple' };
+        }
+
+        function scanFutureTransits(natal, startDate, isTimeUnknown) {
+            const transitPlanets = ['Jupiter', 'Saturn', 'Uranus'];
+            const level1Natals = ['Venus', 'Sun'];
+            const level2Natals = isTimeUnknown ? ['Mars', 'Mercury'] : ['Mars', 'Mercury', 'Moon'];
+            const allTargets = [...level1Natals, ...level2Natals];
+
+            const aspects = [
+                { deg: 0,   name: 'コンジャンクション(0°)', weight: 10 },
+                { deg: 120, name: 'トライン(120°)',        weight: 8 },
+                { deg: 60,  name: 'セクスタイル(60°)',     weight: 6 },
+                { deg: 180, name: 'オポジション(180°)',    weight: 7 },
+                { deg: 90,  name: 'スクエア(90°)',         weight: 6 }
+            ];
+
+            // Step through 24 months (730 days) in 5-day intervals for fast & smooth browser execution
+            const totalDays = 730;
+            const stepDays = 5;
+            const activeHits = []; // Track contiguous windows of aspects
+
+            // Monthly score buckets for Chart.js
+            const monthlyMap = {};
+            for (let m = 0; m < 24; m++) {
+                const d = new Date(startDate.getFullYear(), startDate.getMonth() + m, 1);
+                const key = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+                monthlyMap[key] = { label: key, lv1: 0, lv2: 0 };
+            }
+
+            // Track open windows by unique key: `${tBody}_${nBody}_${aspectDeg}`
+            const openWindows = {};
+
+            for (let dayOffset = 0; dayOffset <= totalDays; dayOffset += stepDays) {
+                const currentDate = new Date(startDate.getTime() + dayOffset * 86400000);
+                const monthKey = `${currentDate.getFullYear()}/${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+
+                // Calculate transit positions for this date
+                const tPos = {};
+                transitPlanets.forEach(tb => {
+                    tPos[tb] = getEclipticLongitude(tb, currentDate);
+                });
+
+                transitPlanets.forEach(tb => {
+                    allTargets.forEach(nb => {
+                        const isLv1 = level1Natals.includes(nb);
+                        // Tighter orb for Level 2 so Level 1 stands out clearly
+                        const maxOrb = isLv1 ? 2.2 : 1.5;
+                        const diff = getAngularDifference(tPos[tb], natal[nb].lon);
+
+                        let matchedAspect = null;
+                        let minOrb = 999;
+
+                        for (const asp of aspects) {
+                            const orb = Math.abs(diff - asp.deg);
+                            if (orb <= maxOrb && orb < minOrb) {
+                                minOrb = orb;
+                                matchedAspect = asp;
+                            }
+                        }
+
+                        // Check all possible aspects to close windows that ended
+                        aspects.forEach(asp => {
+                            const winKey = `${tb}_${nb}_${asp.deg}`;
+                            if (matchedAspect && matchedAspect.deg === asp.deg) {
+                                // Add to monthly chart score
+                                if (monthlyMap[monthKey]) {
+                                    const scoreAdd = Math.max(1, Math.round((maxOrb - minOrb + 0.5) * (asp.weight / 3)));
+                                    if (isLv1) monthlyMap[monthKey].lv1 += scoreAdd;
+                                    else monthlyMap[monthKey].lv2 += scoreAdd;
+                                }
+
+                                if (!openWindows[winKey]) {
+                                    openWindows[winKey] = {
+                                        tBody: tb,
+                                        nBody: nb,
+                                        isLv1,
+                                        aspect: asp,
+                                        start: currentDate,
+                                        end: currentDate,
+                                        peakDate: currentDate,
+                                        minOrb: minOrb
+                                    };
+                                } else {
+                                    openWindows[winKey].end = currentDate;
+                                    if (minOrb < openWindows[winKey].minOrb) {
+                                        openWindows[winKey].minOrb = minOrb;
+                                        openWindows[winKey].peakDate = currentDate;
+                                    }
+                                }
+                            } else if (openWindows[winKey]) {
+                                activeHits.push(openWindows[winKey]);
+                                delete openWindows[winKey];
+                            }
+                        });
+                    });
+                });
+            }
+
+            // Close any remaining open windows at the end of the 2-year period
+            Object.values(openWindows).forEach(w => activeHits.push(w));
+
+            // Sort chronologically by start date
+            activeHits.sort((a, b) => a.start - b.start);
+
+            // Format events with human-friendly labels
+            const formattedEvents = activeHits.map(hit => {
+                const info = getAspectLabel(hit.tBody, hit.nBody, hit.aspect.deg);
+                return {
+                    ...hit,
+                    ...info,
+                    startStr: formatDateJP(hit.start),
+                    endStr: formatDateJP(hit.end),
+                    peakStr: formatDateJP(hit.peakDate)
+                };
+            });
+
+            return {
+                events: formattedEvents,
+                monthlyScores: Object.values(monthlyMap)
+            };
+        }
+
+        function formatDateJP(d) {
+            return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+        }
+
+        // =========================================================================
+        // 7. RENDER CHART & TIMELINE
+        // =========================================================================
+        function renderBiorhythmChart(monthlyData) {
+            const ctx = document.getElementById('biorhythmChart').getContext('2d');
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            const labels = monthlyData.map(m => m.label);
+            const lv1Data = monthlyData.map(m => Math.min(100, m.lv1 * 2.5));
+            const lv2Data = monthlyData.map(m => Math.min(100, m.lv2 * 2.5));
+
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: '出会い・結婚の大チャンス（核）',
+                            data: lv1Data,
+                            borderColor: '#db2777',
+                            backgroundColor: 'rgba(219, 39, 119, 0.14)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: 3,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: '恋のきっかけ・急接近サイン',
+                            data: lv2Data,
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.08)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: 2,
+                            pointHoverRadius: 5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(45, 38, 56, 0.92)',
+                            padding: 10,
+                            cornerRadius: 10,
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.parsed.y;
+                                    let levelText = val >= 60 ? '【大チャンス期】' : val >= 25 ? '【動きあり】' : '【穏やか】';
+                                    return `${context.dataset.label}: ${levelText}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 105,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value === 0) return '穏やか';
+                                    if (value === 50) return '注目期';
+                                    if (value === 100) return '最高潮';
+                                    return '';
+                                },
+                                font: { size: 11 }
+                            },
+                            grid: { color: 'rgba(168, 85, 247, 0.08)' }
+                        },
+                        x: {
+                            ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 0 },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function filterTimeline(mode) {
+            const btnAll = document.getElementById('filter-all');
+            const btnLv1 = document.getElementById('filter-level1');
+
+            if (mode === 'all') {
+                btnAll.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-800 text-white transition';
+                btnLv1.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-100 text-purple-800 hover:bg-purple-200 transition';
+            } else {
+                btnLv1.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-800 text-white transition';
+                btnAll.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-100 text-purple-800 hover:bg-purple-200 transition';
+            }
+            renderTimeline(currentTimelineEvents, mode);
+        }
+
+        function renderTimeline(events, filterMode) {
+            const container = document.getElementById('timelineContainer');
+            const filtered = filterMode === 'level1' ? events.filter(e => e.isLv1) : events;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500 text-sm bg-white/60 rounded-xl border border-dashed border-purple-200">
+                        指定された期間・条件での大きなアスペクトは見つかりませんでした。「すべて表示」に切り替えてサブ情報もご確認ください。
+                    </div>
+                `;
+                return;
+            }
+
+            const toneStyles = {
+                pink:   'border-l-pink-500 bg-pink-50/40',
+                amber:  'border-l-amber-500 bg-amber-50/40',
+                purple: 'border-l-purple-600 bg-purple-50/40',
+                indigo: 'border-l-indigo-500 bg-indigo-50/30',
+                sky:    'border-l-sky-500 bg-sky-50/30',
+                slate:  'border-l-slate-500 bg-slate-50/50'
+            };
+
+            const badgeStyles = {
+                pink:   'bg-pink-100 text-pink-800',
+                amber:  'bg-amber-100 text-amber-900',
+                purple: 'bg-purple-100 text-purple-900',
+                indigo: 'bg-indigo-100 text-indigo-800',
+                sky:    'bg-sky-100 text-sky-800',
+                slate:  'bg-slate-200 text-slate-800'
+            };
+
+            container.innerHTML = filtered.map(ev => {
+                const tJp = PLANET_META[ev.tBody]?.jp || ev.tBody;
+                const nJp = PLANET_META[ev.nBody]?.jp || ev.nBody;
+                const cardStyle = toneStyles[ev.tone] || toneStyles.purple;
+                const bStyle = badgeStyles[ev.tone] || badgeStyles.purple;
+
+                return `
+                    <div class="rounded-xl p-4 border border-purple-100 border-l-4 ${cardStyle} shadow-sm transition hover:shadow-md">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${ev.isLv1 ? 'bg-rose-600 text-white' : 'bg-gray-200 text-gray-700'}">
+                                    ${ev.isLv1 ? '★ 最優先（核）' : 'サブ（きっかけ）'}
+                                </span>
+                                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${bStyle}">${ev.tag}</span>
+                            </div>
+                            <span class="text-xs font-bold text-gray-700 bg-white px-2.5 py-1 rounded-lg border border-gray-200">
+                                <i class="fa-regular fa-calendar mr-1 text-purple-600"></i>${ev.startStr} 〜 ${ev.endStr}
+                            </span>
+                        </div>
+                        <h4 class="font-mincho text-base sm:text-lg font-bold text-gray-900 mt-1">${ev.label}</h4>
+                        <p class="text-xs sm:text-sm text-gray-700 mt-1 leading-relaxed">${ev.desc}</p>
+                        <div class="mt-2.5 pt-2 border-t border-gray-200/60 flex flex-wrap items-center justify-between text-[11px] text-gray-500">
+                            <span>ピーク（最も影響が強い日）：<strong class="text-gray-700">${ev.peakStr}頃</strong></span>
+                            <span>占星術根拠：トランジット${tJp} × ネイタル${nJp}（${ev.aspect.name}）</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+          </script>
+</body>
+</html>
