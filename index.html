@@ -64,6 +64,29 @@
         }
     </style>
 </head>
+
+
+<body class="min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="mystic-gradient text-white py-5 px-4 shadow-md sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center text-amber-200 text-xl border border-white/30">
+                    <i class="fa-solid fa-moon"></i>
+                </div>
+                <div>
+                    <h1 class="font-mincho text-xl sm:text-2xl font-bold tracking-wider">恋星 <span class="text-xs sm:text-sm font-normal text-pink-200 ml-1">Astro-Love Advisor</span></h1>
+                    <p class="text-[11px] sm:text-xs text-purple-100/80">恋愛傾向・結婚像・出会いの時期 専門鑑定システム</p>
+                </div>
+            </div>
+            <div class="text-xs bg-white/10 px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Astronomy Engine 稼働中</span>
+            </div>
+        </div>
+    </header>
+
 <!-- ▼ ここからコピー ▼ -->
 <script>
   (function() {
@@ -104,28 +127,6 @@
   })();
 </script>
 <!-- ▲ ここまでコピー ▲ -->
-
-
-<body class="min-h-screen pb-12">
-
-    <!-- Header -->
-    <header class="mystic-gradient text-white py-5 px-4 shadow-md sticky top-0 z-30">
-        <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center text-amber-200 text-xl border border-white/30">
-                    <i class="fa-solid fa-moon"></i>
-                </div>
-                <div>
-                    <h1 class="font-mincho text-xl sm:text-2xl font-bold tracking-wider">恋星 <span class="text-xs sm:text-sm font-normal text-pink-200 ml-1">Astro-Love Advisor</span></h1>
-                    <p class="text-[11px] sm:text-xs text-purple-100/80">恋愛傾向・結婚像・出会いの時期 専門鑑定システム</p>
-                </div>
-            </div>
-            <div class="text-xs bg-white/10 px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Astronomy Engine 稼働中</span>
-            </div>
-        </div>
-    </header>
 
     <main class="max-w-5xl mx-auto px-4 mt-6 space-y-6">
 
@@ -206,10 +207,13 @@
 
             <!-- Natal Planets Overview Grid -->
             <section class="glass-card rounded-2xl p-5 sm:p-6">
-                <h3 class="font-mincho text-lg font-bold text-purple-950 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-star-and-crescent text-amber-500"></i> 恋愛・結婚に関わる7天体の配置
-                </h3>
-                <div id="planetCardsGrid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
+                    <h3 class="font-mincho text-lg font-bold text-purple-950 flex items-center gap-2">
+                        <i class="fa-solid fa-star-and-crescent text-amber-500"></i> 恋愛・結婚に関わる7天体の配置とタイプ特徴
+                    </h3>
+                    <span class="text-xs text-gray-500">※各天体の星座から読み解く性質・魅力のポイント</span>
+                </div>
+                <div id="planetCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
                     <!-- Populated via JS -->
                 </div>
                 <div id="moonUnknownNotice" class="hidden mt-3 bg-amber-50/90 border border-amber-200/80 rounded-xl p-3 text-xs text-amber-900 flex items-start gap-2">
@@ -418,7 +422,32 @@
                 "仕事上の取引先、信頼できる目上の人からの紹介、歴史ある場所に良縁あり。真面目で将来性のある相手と結ばれます。",
                 "オンラインコミュニティ、異業種交流会、友人ネットワークから出会いあり。価値観が新しく自立した相手と好相性。",
                 "音楽・アートの場、癒やしの空間、ボランティアや相談事を通じて出会いあり。優しく共感力の高い相手と結ばれます。"
+            ],
+            Moon: [
+                "裏表がなく素直な感情表現をするタイプ。一緒にいてワクワクする刺激や、自分のペースを尊重してくれる関係に安心します。",
+                "穏やかで安定した日常を愛する癒やし系。美味しい食事や心地よい空間を共有し、ゆったり過ごせる相手に心を開きます。",
+                "気さくで好奇心旺盛なムードメーカー。何でも気軽に話せて、重くならず風通しの良い関係性に心地よさを感じます。",
+                "情が深く家族や身内を大切にするタイプ。感情に寄り添い、温かい言葉や優しさで包み込んでくれる相手に安心します。",
+                "明るくドラマチックな感情の持ち主。自分の存在を認め、褒めて大切にしてくれるパートナーの隣で心が満たされます。",
+                "繊細で気配り上手なサポートタイプ。生活リズムや価値観が整っていて、誠実に約束を守ってくれる相手に安心します。",
+                "平和で調和のとれた空気感を大切にするタイプ。感情的にならずスマートに話し合える洗練された関係に安らぎます。",
+                "一度心を開くと深く一途に相手を想う情熱家。表面的な付き合いではなく、本音で深く結びつける相手に安心感を覚えます。",
+                "自由でポジティブな心の持ち主。束縛されずにお互いの夢や冒険を応援し合える、開放的な関係が一番リラックスできます。",
+                "真面目で責任感が強く、少し甘え下手な一面も。弱音を受け止めてくれて、信頼と実績を積み重ねられる相手に安心します。",
+                "自立心が強くクールでフラットな感情の持ち主。べったりしすぎず、個性を認め合える親友のような関係に心が安らぎます。",
+                "共感力が非常に高くロマンチックな甘えん坊。理屈抜きで気持ちに寄り添い、優しく受け止めてくれる相手に癒やされます。"
             ]
+        };
+
+        // Short catchphrases for each Planet x Sign combination
+        const SIGN_TRAIT_TAGS = {
+            Venus:   ['情熱ストレート型', '五感ロマンチスト型', '爽やかトーク恋型', '包容力・家庭的愛型', '華やかドラマチック型', '誠実サポート愛型', '洗練スマート恋型', '一途・濃密引力型', '自由奔放オープン型', '堅実・大人の誠実恋型', '個性派フレンド恋型', '癒やし献身ロマン型'],
+            Mars:    ['即断即決アプローチ型', 'じっくり堅実進展型', '言葉と知性の策士型', '守り抜く情熱行動型', '堂々リーダーアプローチ型', '気配り献身アプローチ型', 'スマートエスコート型', '秘めたる激愛ハンター型', 'フットワーク軽快型', '計画的・誠実攻略型', '友人から自然接近型', 'ムードと優しさ魅了型'],
+            Sun:     ['活気ある自立夫婦型', '安定・豊かさ重視型', '親友のような会話夫婦型', '温かい家族愛重視型', '誇り高き華やか家庭型', '堅実・丁寧な暮らし型', '対等パートナーシップ型', '深い絆・運命共同体型', '自由と成長の冒険夫婦型', '信頼と社会的安定型', '枠にとらわれない対等型', '癒やしと共感の家庭型'],
+            Mercury: ['即レス・テンポ重視型', '丁寧マイペース返信型', '話題豊富ユーモア型', '共感・気遣いメッセージ型', 'ポジティブ褒め上手型', '具体的・実用的連絡型', 'スマート配慮トーク型', '本音・深い対話重視型', 'ストレート開放トーク型', '礼儀正しさ・誠実連絡型', 'ユニーク視点シェア型', '温かみ・雰囲気重視型'],
+            Jupiter: ['アクティブ挑戦の場縁型', 'グルメ・趣味の場良縁型', 'SNS・学び・紹介縁型', '身近なコミュニティ縁型', '華やかな場・推し活縁型', '職場・習い事・誠実縁型', '紹介・洗練スポット縁型', '少人数・深い語らい縁型', '旅先・未知の世界縁型', '仕事・目上の紹介縁型', 'ネット・交流会ネットワーク縁型', 'アート・癒やしの場縁型'],
+            Saturn:  ['焦りを手放し絆を深める鍵', '変化を恐れず安定を掴む鍵', '丁寧な対話で信頼を築く鍵', '防衛心を解き甘える鍵', '等身大の自分を見せる鍵', '完璧主義を緩め愛する鍵', '本音を伝え対等になる鍵', '疑いを手放し信じ抜く鍵', '自由への不安を超える鍵', '一人で背負わず頼る鍵', '心の距離を縮め温める鍵', '自己犠牲を手放し愛される鍵'],
+            Moon:    ['素直でワクワク重視タイプ', '穏やかマイペース癒やしタイプ', '気さくで軽やかトークタイプ', '情が深く家族思いタイプ', '明るく褒められ伸びるタイプ', '繊細で気配り上手タイプ', '平和でスマートな調和タイプ', '一途で深い結びつきタイプ', '自由でポジティブ開放タイプ', '真面目で誠実な頑張り屋タイプ', '自立したクールな親友タイプ', '共感力抜群の甘えん坊タイプ']
         };
 
         // =========================================================================
@@ -609,21 +638,31 @@
                 const info = natal[body];
                 const meta = PLANET_META[body];
                 const isMoonMuted = (body === 'Moon' && isTimeUnknown);
+                const traitTag = SIGN_TRAIT_TAGS[body][info.signIndex];
+                const fullDesc = SIGN_INTERPRETATIONS[body][info.signIndex];
 
                 const card = document.createElement('div');
-                card.className = `rounded-xl p-3 border transition ${isMoonMuted ? 'opacity-45 bg-gray-50/70 border-dashed border-gray-300' : 'bg-white border-purple-100 shadow-sm hover:shadow-md'}`;
+                card.className = `rounded-xl p-3.5 border transition flex flex-col justify-between ${isMoonMuted ? 'opacity-50 bg-gray-50/70 border-dashed border-gray-300' : 'bg-white border-purple-100 shadow-sm hover:shadow-md'}`;
                 card.innerHTML = `
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="text-xs font-bold ${meta.accent} flex items-center gap-1">
-                            <span>${meta.symbol}</span> ${meta.jp}
-                        </span>
-                        ${isMoonMuted ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-bold">時間不明</span>' : ''}
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-xs font-bold ${meta.accent} flex items-center gap-1">
+                                <span>${meta.symbol}</span> ${meta.jp}
+                            </span>
+                            ${isMoonMuted
+                                ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold">時間不明・参考</span>'
+                                : `<span class="text-[11px] text-gray-400 font-mono">${info.degree}°${String(info.minute).padStart(2, '0')}'</span>`
+                            }
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5 mb-2">
+                            <span class="text-base font-bold px-2 py-0.5 rounded-lg border ${info.sign.color}">${info.sign.symbol} ${info.sign.name}</span>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-purple-50 text-purple-900 border border-purple-100">${traitTag}</span>
+                        </div>
+                        <p class="text-xs text-gray-700 leading-relaxed mb-2">${fullDesc}</p>
                     </div>
-                    <div class="my-1.5 flex items-center gap-1.5">
-                        <span class="text-lg font-bold px-2 py-0.5 rounded-lg border ${info.sign.color}">${info.sign.symbol} ${info.sign.name}</span>
+                    <div class="text-[10px] text-gray-500 pt-1.5 border-t border-gray-100 flex items-center justify-between">
+                        <span>役割：${meta.role}</span>
                     </div>
-                    <div class="text-[11px] text-gray-500 font-mono">${info.degree}°${String(info.minute).padStart(2, '0')}'</div>
-                    <div class="text-[10px] text-gray-500 mt-1.5 leading-tight border-t border-gray-100 pt-1">${meta.role}</div>
                 `;
                 grid.appendChild(card);
             });
@@ -1100,6 +1139,7 @@
     document.body.appendChild(s);
   }
 
+
     </script>
 </body>
 <!-- ▼ クレジット表記（画面最下部に固定） ▼ -->
@@ -1121,5 +1161,6 @@
 ">
   © 2026  AI専属占い師ハルカ / note購入者専用アプリ
 </div>
+
 
 </html>
