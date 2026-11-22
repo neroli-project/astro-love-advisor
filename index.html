@@ -64,27 +64,6 @@
         }
     </style>
 </head>
-<body class="min-h-screen pb-12">
-
-    <!-- Header -->
-    <header class="mystic-gradient text-white py-5 px-4 shadow-md sticky top-0 z-30">
-        <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center text-amber-200 text-xl border border-white/30">
-                    <i class="fa-solid fa-moon"></i>
-                </div>
-                <div>
-                    <h1 class="font-mincho text-xl sm:text-2xl font-bold tracking-wider">恋星 <span class="text-xs sm:text-sm font-normal text-pink-200 ml-1">Astro-Love Advisor</span></h1>
-                    <p class="text-[11px] sm:text-xs text-purple-100/80">恋愛傾向・結婚像・出会いの時期 専門鑑定システム</p>
-                </div>
-            </div>
-            <div class="text-xs bg-white/10 px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Astronomy Engine 稼働中</span>
-            </div>
-        </div>
-    </header>
-
 <!-- ▼ ここからコピー ▼ -->
 <script>
   (function() {
@@ -127,6 +106,26 @@
 <!-- ▲ ここまでコピー ▲ -->
 
 
+<body class="min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="mystic-gradient text-white py-5 px-4 shadow-md sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center text-amber-200 text-xl border border-white/30">
+                    <i class="fa-solid fa-moon"></i>
+                </div>
+                <div>
+                    <h1 class="font-mincho text-xl sm:text-2xl font-bold tracking-wider">恋星 <span class="text-xs sm:text-sm font-normal text-pink-200 ml-1">Astro-Love Advisor</span></h1>
+                    <p class="text-[11px] sm:text-xs text-purple-100/80">恋愛傾向・結婚像・出会いの時期 専門鑑定システム</p>
+                </div>
+            </div>
+            <div class="text-xs bg-white/10 px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Astronomy Engine 稼働中</span>
+            </div>
+        </div>
+    </header>
 
     <main class="max-w-5xl mx-auto px-4 mt-6 space-y-6">
 
@@ -171,7 +170,7 @@
                     <div class="flex items-center gap-3 w-full sm:w-auto">
                         <label class="text-xs font-bold text-gray-600 whitespace-nowrap">時期予測の基準日：</label>
                         <input type="date" id="targetDate" class="px-3 py-2 rounded-xl border border-purple-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
-                        <span class="text-xs text-gray-500 hidden md:inline">※この日から向こう2年間の恋愛運・出会いをスキャンします</span>
+                        <span class="text-xs text-gray-500 hidden md:inline">※この日から向こう1年間の恋愛運・出会いをスキャンします</span>
                     </div>
 
                     <button type="submit" class="w-full sm:w-auto mystic-gradient hover:opacity-95 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-purple-900/20 transition transform active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap">
@@ -200,7 +199,10 @@
                     <h2 id="displayClientTitle" class="font-mincho text-2xl font-bold text-gray-900 mt-1">ゲスト様 の恋愛・結婚ホロスコープ</h2>
                     <p id="displayBirthSummary" class="text-xs text-gray-500 mt-0.5"></p>
                 </div>
-                            </div>
+                <button onclick="copyReportSummary()" class="text-xs bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-4 py-2.5 rounded-xl shadow-sm transition flex items-center gap-2 self-end sm:self-center">
+                    <i class="fa-regular fa-copy text-purple-600"></i> 鑑定サマリーをコピー
+                </button>
+            </div>
 
             <!-- Natal Planets Overview Grid -->
             <section class="glass-card rounded-2xl p-5 sm:p-6">
@@ -222,7 +224,7 @@
             <!-- Navigation Tabs for Detailed Readings -->
             <div class="flex flex-wrap gap-2 bg-white/60 p-1.5 rounded-2xl border border-purple-100">
                 <button onclick="switchTab('timing')" id="tab-timing" class="tab-active flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2">
-                    <i class="fa-regular fa-calendar-check"></i> 出会いの時期・運気予報（2年間）
+                    <i class="fa-regular fa-calendar-check"></i> 出会いの時期・運気予報（1年間）
                 </button>
                 <button onclick="switchTab('loveStyle')" id="tab-loveStyle" class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-gray-600 hover:bg-white/80 transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-heart"></i> 基本の恋愛傾向・アプローチ
@@ -238,7 +240,7 @@
                 <div class="glass-card rounded-2xl p-5 sm:p-6">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                         <div>
-                            <h3 class="font-mincho text-lg font-bold text-purple-950">今後2年間の恋愛・出会いバイオリズム</h3>
+                            <h3 class="font-mincho text-lg font-bold text-purple-950">今後1年間の恋愛・出会いバイオリズム</h3>
                             <p class="text-xs text-gray-500">「出会い・結婚の大チャンス（核）」と「恋のきっかけ・急接近サイン」の2つの波を表示</p>
                         </div>
                         <div class="flex flex-wrap items-center gap-3 text-xs">
@@ -255,8 +257,8 @@
                 <div class="glass-card rounded-2xl p-5 sm:p-6">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-purple-100 pb-3">
                         <div>
-                            <h3 class="font-mincho text-lg font-bold text-purple-950">お客様にそのまま伝えられる「チャンス期カレンダー」</h3>
-                            <p class="text-xs text-gray-500">占星術の専門用語を、鑑定で使いやすい具体的な恋愛イベントラベルに変換しています</p>
+                            <h3 class="font-mincho text-lg font-bold text-purple-950">チャンス期カレンダー</h3>
+                            <p class="text-xs text-gray-500">あなたの生まれた瞬間の星の配置と、今の空の星の動きが重なるタイミングから、恋愛のチャンス期を割り出しています。</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <button onclick="filterTimeline('all')" id="filter-all" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-800 text-white transition">すべて表示</button>
@@ -574,7 +576,7 @@
                 renderLoveStyleReadings(natalChart, isTimeUnknown);
                 renderMarriageReadings(natalChart, isTimeUnknown);
 
-                // Scan 2-Year Transits & Render Graph + Timeline
+                // Scan 1-Year Transits & Render Graph + Timeline
                 const startDate = new Date(`${targetDateStr}T12:00:00+09:00`);
                 const scanResults = scanFutureTransits(natalChart, startDate, isTimeUnknown);
                 currentTimelineEvents = scanResults.events;
@@ -793,14 +795,14 @@
                 { deg: 90,  name: 'スクエア(90°)',         weight: 6 }
             ];
 
-            // Step through 24 months (730 days) in 5-day intervals for fast & smooth browser execution
-            const totalDays = 730;
-            const stepDays = 5;
+            // Step through 12 months (365 days) in 3-day intervals for crisp 1-year accuracy
+            const totalDays = 365;
+            const stepDays = 3;
             const activeHits = []; // Track contiguous windows of aspects
 
-            // Monthly score buckets for Chart.js
+            // Monthly score buckets for Chart.js (12 months)
             const monthlyMap = {};
-            for (let m = 0; m < 24; m++) {
+            for (let m = 0; m < 12; m++) {
                 const d = new Date(startDate.getFullYear(), startDate.getMonth() + m, 1);
                 const key = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`;
                 monthlyMap[key] = { label: key, lv1: 0, lv2: 0 };
@@ -843,7 +845,7 @@
                             if (matchedAspect && matchedAspect.deg === asp.deg) {
                                 // Add to monthly chart score
                                 if (monthlyMap[monthKey]) {
-                                    const scoreAdd = Math.max(1, Math.round((maxOrb - minOrb + 0.5) * (asp.weight / 3)));
+                                    const scoreAdd = Math.max(1, Math.round((maxOrb - minOrb + 0.5) * (asp.weight / 4)));
                                     if (isLv1) monthlyMap[monthKey].lv1 += scoreAdd;
                                     else monthlyMap[monthKey].lv2 += scoreAdd;
                                 }
@@ -875,7 +877,7 @@
                 });
             }
 
-            // Close any remaining open windows at the end of the 2-year period
+            // Close any remaining open windows at the end of the 1-year period
             Object.values(openWindows).forEach(w => activeHits.push(w));
 
             // Sort chronologically by start date
@@ -1067,16 +1069,39 @@
             }).join('');
         }
 
- // 鍵が正しい時だけ script.js を読み込む
+        // =========================================================================
+        // 8. COPY SUMMARY FOR CLIENT / LINE REPORT
+        // =========================================================================
+        function copyReportSummary() {
+            const title = document.getElementById('displayClientTitle').textContent;
+            const birth = document.getElementById('displayBirthSummary').textContent;
+            const loveText = document.getElementById('loveScriptSummary').innerText;
+            const marriageText = document.getElementById('marriageScriptSummary').innerText;
+
+            const lv1Events = currentTimelineEvents.filter(e => e.isLv1).slice(0, 5);
+            const eventsText = lv1Events.length > 0
+                ? lv1Events.map(e => `・${e.startStr}〜${e.endStr}：${e.label}`).join('\n')
+                : '・直近の大きな転機は穏やかです（日々のコミュニケーションから育む時期）';
+
+            const report = `【${title}】\n${birth}\n\n■ 恋愛傾向・魅力\n${loveText}\n\n■ 結婚運・パートナー像\n${marriageText}\n\n■ 今後の主な恋愛・出会いのチャンス期\n${eventsText}`;
+
+            const buffer = document.getElementById('clipboardBuffer');
+            buffer.value = report;
+            buffer.select();
+            document.execCommand('copy');
+
+            showMessage('鑑定サマリーをクリップボードにコピーしました！LINEやメモ帳にそのまま貼り付けられます。');
+        }
+
+// 鍵が正しい時だけ script.js を読み込む
   if (localStorage.getItem("app_unlocked_status") === "aiharuka") { // ←ここも設定した鍵と同じにする
     const s = document.createElement("script");
     s.src = "script.js";
     document.body.appendChild(s);
   }
 
-
-          </script>
-
+    </script>
+</body>
 <!-- ▼ クレジット表記（画面最下部に固定） ▼ -->
 <div style="
   position: fixed;
@@ -1094,6 +1119,7 @@
   box-sizing: border-box;
   pointer-events: none;
 ">
-  © 2026 AI専属占い師ハルカ / note購入者専用アプリ
-</body>
+  © 2026  AI専属占い師ハルカ / note購入者専用アプリ
+</div>
+
 </html>
